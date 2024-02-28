@@ -8,6 +8,7 @@ const cors = require('cors');
 const usersRouter = require('./routes/users');
 const postRoutes = require('./routes/posts');
 const commentRouter = require('./routes/comments');
+const likesRouter = require('./routes/likes');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -17,6 +18,7 @@ app.use(cors()); // 允许跨域请求
 app.use(express.json()); // 解析JSON请求体
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRouter);
+app.use('/api/likes', likesRouter);
 
 // 数据库连接（示例使用MongoDB）
 mongoose.connect(process.env.MONGODB_URI, {

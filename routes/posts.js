@@ -7,9 +7,17 @@ const authenticateToken = require('../authenticateToken');
 router.get('/', async (req, res) => {
     try {
         const posts = await Post.find().populate('author', 'username');
-        res.json(posts);
+        const postWithLikes = await Promise.all(posts.map(async post => {
+          const likes = await Like.find({ post: post._id }).populate('user', 'username');
+          return {
+            ...post.toObject(),
+            likesCount: likes.length,
+            likedBy: likes.map(like => like.user.username)
+          };
+        }));
+        res.json(postWithLikes);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message });
     }
 });
 
@@ -88,5 +96,7 @@ router.delete('/:id', authenticateToken, getPost, async (req, res) => {
       res.status(500).json({ message: err.message });
     }
 });
+
+
 
 module.exports = router;
